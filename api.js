@@ -1,4 +1,3 @@
-// Ana dosya (index.js veya app.js)
 
 const express = require('express');
 const createPerson = require('./CreatePerson');

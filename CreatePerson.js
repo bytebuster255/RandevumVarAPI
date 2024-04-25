@@ -1,4 +1,3 @@
-// delete.js
 const dbManager = require('./DatabaseManager');
 const tokenManager = require("./TokenManager");
 
