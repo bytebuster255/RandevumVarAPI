@@ -17,6 +17,6 @@ app.post('/createPerson', createPerson);
 
 // Sunucuyu dinle
 app.listen(3000, () => {
-    console.log('Sunucu çalışıyor..');
+    console.log('Sunucu çalışıyor...');
     
 });

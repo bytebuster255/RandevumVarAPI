@@ -20,7 +20,7 @@ function CreatePerson(req, res) {
     // Veritabanında hangi alanın (Username, Email veya PhoneNumber) kullanımda olduğunu kontrol et
     dbManager.checkDuplicate(Username, Email, PhoneNumber, (err, duplicate) => {
         if (err) {
-            console.error("Veritabanı hatası:", err);
+            console.error("Database error:", err);
             return res.status(500).send("Veritabanı hatası");
         }
         
