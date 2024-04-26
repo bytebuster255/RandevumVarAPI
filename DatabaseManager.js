@@ -1,18 +1,14 @@
-// Öncelikle mysql modülünü yükleyin
 const mysql = require('mysql');
 
-// Veritabanı bağlantı ayarları
 const dbConfig = {
   host: 'localhost',
-  user: 'root', // MySQL kullanıcı adınız
-  password: '', // MySQL şifreniz
+  user: 'root', 
+  password: '', 
   database: 'websitedata'
 };
 
-// Veritabanı bağlantısını oluşturun
 const connection = mysql.createConnection(dbConfig);
 
-// Veritabanı bağlantısını başlatın
 connection.connect((err) => {
   if (err) {
     console.error('Veritabanı bağlantısı başarısız oldu: ' + err.stack);
@@ -22,10 +18,7 @@ connection.connect((err) => {
   console.log('Veritabanı bağlantısı başarıyla sağlandı');
 });
 
-// Veri ekleyen fonksiyon
-// Veri ekleyen ve çakışmayı kontrol eden fonksiyon
 function ekleVeri(username, name, surname, email, referanceNumber, invitingId, phoneNumber, hashedToken) {
-  // Veritabanında aynı Username, Email veya PhoneNumber'a sahip bir kayıt var mı kontrol et
 
  
       const insertSql = `INSERT INTO accounts (Username, Name, Surname, Email, ReferanceNumber, InvitingId, PhoneNumber, HashedToken) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -65,7 +58,6 @@ function checkDuplicate(username, email, phoneNumber, callback) {
 
 
 
-// Modül fonksiyonunu dışa aktarın
 module.exports = {
   addPerson: ekleVeri,
   checkDuplicate : checkDuplicate
