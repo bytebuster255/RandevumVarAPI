@@ -13,9 +13,6 @@ app.use(cors());
 app.post('/createPerson', createPerson);
 
 
-// Silme rotası
-
-// Diğer rotaları buraya ekle...
 
 // Sunucuyu dinle
 app.listen(3001, () => {
