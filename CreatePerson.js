@@ -3,7 +3,7 @@ const tokenManager = require("./TokenManager");
 const bcrypt = require("bcrypt");
 
 function CreatePerson(req, res) {
-  const { Username, Name, Surname, Email, InvitingId, PhoneNumber } = req.body;
+  const { Username, Name, Surname, Email, InvitingId, PhoneNumber , Password } = req.body;
   const requiredFields = [
     "Username",
     "Name",
@@ -11,6 +11,7 @@ function CreatePerson(req, res) {
     "Email",
     "InvitingId",
     "PhoneNumber",
+    "Password"
   ];
 
   for (const field of requiredFields) {
@@ -32,8 +33,7 @@ function CreatePerson(req, res) {
     } else if (duplicate.phoneNumber) {
       return res.status(400).send("Bu telefon numarası zaten kullanımda");
     } else {
-      bcrypt.hash(Username, 12, function (err, hash) {
-        // şifre olarak değiştirilicek
+      bcrypt.hash(Password, 12, function (err, hash) {
         if (err) {
           console.error("Hashing error:", err);
           return res.status(500).send("Hashleme hatası");
@@ -49,7 +49,7 @@ function CreatePerson(req, res) {
           hash
         );
 
-        res.json({ accestoken: tokenManager.createToken({ Username, Email }) });
+        res.json({ accestoken: tokenManager.createToken({ Username, Email , Password}) });
       });
     }
   });
