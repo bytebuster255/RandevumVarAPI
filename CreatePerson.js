@@ -2,8 +2,9 @@ const dbManager = require("./DatabaseManager");
 const tokenManager = require("./TokenManager");
 const bcrypt = require("bcrypt");
 
-function CreatePerson(req, res) {
-  const { Username, Name, Surname, Email, InvitingId, PhoneNumber , Password } = req.body;
+async function CreatePerson(req, res) {
+  const { Username, Name, Surname, Email, InvitingId, PhoneNumber, Password } =
+    req.body;
   const requiredFields = [
     "Username",
     "Name",
@@ -11,7 +12,7 @@ function CreatePerson(req, res) {
     "Email",
     "InvitingId",
     "PhoneNumber",
-    "Password"
+    "Password",
   ];
 
   for (const field of requiredFields) {
@@ -20,39 +21,54 @@ function CreatePerson(req, res) {
     }
   }
 
-  dbManager.checkDuplicate(Username, Email, PhoneNumber, (err, duplicate) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).send("Veritabanı hatası");
-    }
+  dbManager.checkDuplicate(
+    Username,
+    Email,
+    PhoneNumber,
+    async (err, duplicate) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).send("Veritabanı hatası");
+      }
 
-    if (duplicate.username) {
-      return res.status(400).send("Bu kullanıcı adı zaten kullanımda");
-    } else if (duplicate.email) {
-      return res.status(400).send("Bu e-posta zaten kullanımda");
-    } else if (duplicate.phoneNumber) {
-      return res.status(400).send("Bu telefon numarası zaten kullanımda");
-    } else {
-      bcrypt.hash(Password, 12, function (err, hash) {
-        if (err) {
-          console.error("Hashing error:", err);
-          return res.status(500).send("Hashleme hatası");
+      if (duplicate.username) {
+        return res.status(400).send("Bu kullanıcı adı zaten kullanımda");
+      } else if (duplicate.email) {
+        return res.status(400).send("Bu e-posta zaten kullanımda");
+      } else if (duplicate.phoneNumber) {
+        return res.status(400).send("Bu telefon numarası zaten kullanımda");
+      } else {
+        try {
+          // Salt oluştur
+          const salt = await bcrypt.genSalt(12);
+          console.log("Salt: ", salt);
+
+          // Şifreyi hashle
+          const hash = await bcrypt.hash(Password, salt);
+          console.log("Hash: ", hash);
+
+          // Kişiyi veritabanına ekle
+          dbManager.addPerson(
+            Username,
+            Name,
+            Surname,
+            Email,
+            "",
+            InvitingId,
+            PhoneNumber,
+            hash
+          );
+
+          // Yanıtı gönder
+          res.json({ accestoken: { hash } });
+        } catch (error) {
+          console.error(error.message);
+          // Hata durumunda uygun bir yanıt gönder
+          res.status(500).send("Bir hata oluştu");
         }
-        dbManager.addPerson(
-          Username,
-          Name,
-          Surname,
-          Email,
-          "",
-          InvitingId,
-          PhoneNumber,
-          hash
-        );
-
-        res.json({ accestoken: tokenManager.createToken({ Username, Email , Password}) });
-      });
+      }
     }
-  });
+  );
 }
 
 module.exports = CreatePerson;
