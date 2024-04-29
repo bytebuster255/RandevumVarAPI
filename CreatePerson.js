@@ -39,15 +39,10 @@ async function CreatePerson(req, res) {
         return res.status(400).send("Bu telefon numarası zaten kullanımda");
       } else {
         try {
-          // Salt oluştur
-          const salt = await bcrypt.genSalt(12);
+          const salt = await bcrypt.genSalt(14);
           console.log("Salt: ", salt);
-
-          // Şifreyi hashle
           const hash = await bcrypt.hash(Password, salt);
           console.log("Hash: ", hash);
-
-          // Kişiyi veritabanına ekle
           dbManager.addPerson(
             Username,
             Name,
@@ -56,11 +51,21 @@ async function CreatePerson(req, res) {
             "",
             InvitingId,
             PhoneNumber,
-            hash
+            hash,
+            (err, Id) => {
+              console.log(Id);
+              return res
+                .status(200)
+                .json({
+                  token: tokenManager.createToken({
+                    userId: Id,
+                    userName: Username,
+                  }),
+                });
+            }
           );
 
           // Yanıtı gönder
-          res.json({ accestoken: { hash } });
         } catch (error) {
           console.error(error.message);
           // Hata durumunda uygun bir yanıt gönder

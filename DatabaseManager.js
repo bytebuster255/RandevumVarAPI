@@ -27,7 +27,8 @@ function ekleVeri(
   referanceNumber,
   invitingId,
   phoneNumber,
-  hashedToken
+  hashedToken,
+  callback
 ) {
   const insertSql = `INSERT INTO accounts (Username, Name, Surname, Email, ReferanceNumber, InvitingId, PhoneNumber, HashedToken) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
   const insertValues = [
@@ -43,7 +44,9 @@ function ekleVeri(
 
   connection.query(insertSql, insertValues, (err, result) => {
     if (err) throw err;
-    console.log("Veri başarıyla eklendi");
+    console.log("Son eklenen ID:", result.insertId);
+    const Id = result.insertId;
+    callback(null, Id);
   });
 }
 
@@ -93,16 +96,15 @@ function GetUserByUsername(Username, callback) {
     WHERE \`Username\`=?;
   `;
 
-  connection.query(query, [Username], (error, results, fields) => {
-    const cleanResults = JSON.parse(JSON.stringify(results));
-  
-    if (results.length === 0) {
-      callback(null, null);
-      return;
-    }
-    callback(null, cleanResults[0]);
-  });
-  
+    connection.query(query, [Username], (error, results, fields) => {
+      const cleanResults = JSON.parse(JSON.stringify(results));
+
+      if (results.length === 0) {
+        callback(null, null);
+        return;
+      }
+      callback(null, cleanResults[0]);
+    });
   }
 }
 

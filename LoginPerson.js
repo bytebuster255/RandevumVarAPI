@@ -26,7 +26,14 @@ async function Loginperson(req, res) {
     const matchCorrect = bcrypt.compareSync(LoginToken, user.HashedToken);
 
     if (matchCorrect) {
-      return res.status(200).json(user);
+      return res
+        .status(200)
+        .json({
+          token: tokenManager.createToken({
+            userId: user.Id,
+            userName: user.Username,
+          }),
+        });
     } else {
       return res.status(200).send("pass incorrect");
     }
