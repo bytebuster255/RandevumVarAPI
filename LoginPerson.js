@@ -15,6 +15,7 @@ async function Loginperson(req, res) {
   }
 
   DatabaseManager.GetUserByUsername(Username, (error, user) => {
+    console.table(user);
     if (error) {
       return res.status(500).send("Bir hata oluştu");
     }

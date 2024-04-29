@@ -30,7 +30,7 @@ function ekleVeri(
   hashedToken,
   callback
 ) {
-  const insertSql = `INSERT INTO accounts (Username, Name, Surname, Email, ReferanceNumber, InvitingId, PhoneNumber, HashedToken) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  const insertSql = `INSERT INTO accounts (Username, Name, Surname, Email, ReferanceNumber, InvitingId, PhoneNumber, HashedToken,isVolunteer,isApproved) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;  // isVolunteer bu kısım gönüllü durumu
   const insertValues = [
     username,
     name,
@@ -40,6 +40,8 @@ function ekleVeri(
     invitingId,
     phoneNumber,
     hashedToken,
+    false,
+    false
   ];
 
   connection.query(insertSql, insertValues, (err, result) => {
@@ -77,7 +79,7 @@ function checkDuplicate(username, email, phoneNumber, callback) {
 function tokenController(hashedToken, callback) {
   if (hashedToken) {
     const query = `
-    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\`
+    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\` , \`isVolunteer\`,  \`isApproved\`
     FROM \`websitedata\`.\`accounts\`
     WHERE \`HashedToken\`=?;
   `;
@@ -91,7 +93,7 @@ function tokenController(hashedToken, callback) {
 function GetUserByUsername(Username, callback) {
   if (Username) {
     const query = `
-    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\`
+    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\` , \`isVolunteer\`,  \`isApproved\`
     FROM \`websitedata\`.\`accounts\`
     WHERE \`Username\`=?;
   `;
