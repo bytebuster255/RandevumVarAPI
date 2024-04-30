@@ -54,21 +54,16 @@ async function CreatePerson(req, res) {
             hash,
             (err, Id) => {
               console.log(Id);
-              return res
-                .status(200)
-                .json({
-                  token: tokenManager.createToken({
-                    userId: Id,
-                    userName: Username,
-                  }),
-                });
+              return res.status(200).json({
+                token: tokenManager.createToken({
+                  userId: Id,
+                  userName: Username,
+                }),
+              });
             }
           );
-
-          // Yanıtı gönder
         } catch (error) {
           console.error(error.message);
-          // Hata durumunda uygun bir yanıt gönder
           res.status(500).send("Bir hata oluştu");
         }
       }
