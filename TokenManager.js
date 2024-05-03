@@ -3,16 +3,17 @@ const secretKey = 'gizliAnahtar';
 
 
 function createToken(payload) {
-    return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+    return jwt.sign(payload, secretKey, { expiresIn: '1d' });
 }
 function verifyToken(token) {
     try {
-        return jwt.verify(token, secretKey);
+        const decodedToken = jwt.verify(token, secretKey);
+        return decodedToken;
     } catch (error) {
-        console.error('Token doğrulanamadı:', error);
         return null;
     }
 }
+
 module.exports = {
     createToken: createToken,
     verifyToken : verifyToken
