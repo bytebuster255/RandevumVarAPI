@@ -30,7 +30,7 @@ function ekleVeri(
   hashedToken,
   callback
 ) {
-  const insertSql = `INSERT INTO accounts (Username, Name, Surname, Email, ReferanceNumber, InvitingId, PhoneNumber, HashedToken,isVolunteer,isApproved) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;  // isVolunteer bu kısım gönüllü durumu
+  const insertSql = `INSERT INTO accounts (Username, Name, Surname, Email, ReferanceNumber, InvitingId, PhoneNumber, HashedToken,isVolunteer,isApproved) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`; // isVolunteer bu kısım gönüllü durumu
   const insertValues = [
     username,
     name,
@@ -41,7 +41,7 @@ function ekleVeri(
     phoneNumber,
     hashedToken,
     false,
-    false
+    false,
   ];
 
   connection.query(insertSql, insertValues, (err, result) => {
@@ -79,7 +79,7 @@ function checkDuplicate(username, email, phoneNumber, callback) {
 function tokenController(hashedToken, callback) {
   if (hashedToken) {
     const query = `
-    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\` , \`isVolunteer\`,  \`isApproved\`
+    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\` , \`isVolunteer\`,  \`isApproved\` , \`role\`
     FROM \`websitedata\`.\`accounts\`
     WHERE \`HashedToken\`=?;
   `;
@@ -93,7 +93,7 @@ function tokenController(hashedToken, callback) {
 function GetUserByUsername(Username, callback) {
   if (Username) {
     const query = `
-    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\` , \`isVolunteer\`,  \`isApproved\`
+    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\` , \`isVolunteer\`,  \`isApproved\` , \`role\`
     FROM \`websitedata\`.\`accounts\`
     WHERE \`Username\`=?;
   `;
@@ -110,9 +110,39 @@ function GetUserByUsername(Username, callback) {
   }
 }
 
+function GetUsersByNotApproved(callback) {
+  if (typeof callback !== "function") {
+    console.error("Callback is not a function");
+    return;
+  }
+
+  const query = `
+    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\`, \`isVolunteer\`, \`isApproved\`, \`role\`
+    FROM \`websitedata\`.\`accounts\`
+    WHERE \`isApproved\`= 0;
+  `;
+
+  connection.query(query, (error, results, fields) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+
+    const cleanResults = JSON.parse(JSON.stringify(results));
+
+    if (cleanResults.length === 0) {
+      callback(null, null);
+      return;
+    }
+
+    callback(null, cleanResults);
+  });
+}
+
 module.exports = {
   addPerson: ekleVeri,
   checkDuplicate: checkDuplicate,
   tokenData: tokenController,
   GetUserByUsername: GetUserByUsername,
+  GetUsersByNotApproved: GetUsersByNotApproved,
 };
