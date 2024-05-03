@@ -31,6 +31,7 @@ async function Loginperson(req, res) {
           userId: user.Id,
           userName: user.Username,
           userEmail: user.userEmail,
+          role : user.role
         }),
       });
     } else {
