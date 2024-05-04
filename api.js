@@ -3,7 +3,7 @@ const createPerson = require("./CreatePerson");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const Loginperson = require("./LoginPerson");
-
+const NotApproved  = require("./NotApproved")
 const app = express();
 
 function customJsonMiddleware(req, res, next) {
@@ -24,6 +24,10 @@ app.use((req, res, next) => {
 
 app.post("/createPerson", createPerson);
 app.post("/loginPerson", Loginperson);
+app.post("/notapproved", NotApproved);
+
+
+
 
 app.listen(3001, () => {
   console.log("Sunucu çalışıyor...");
