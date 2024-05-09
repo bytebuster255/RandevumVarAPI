@@ -110,6 +110,29 @@ function GetUserByUsername(Username, callback) {
   }
 }
 
+
+
+function GetUserByEmail(Email, callback) {
+  if (Email) {
+    const query = `
+    SELECT \`Id\`, \`Username\`, \`Name\`, \`Surname\`, \`Email\`, \`ReferanceNumber\`, \`InvitingId\`, \`PhoneNumber\`, \`HashedToken\` , \`isVolunteer\`,  \`isApproved\` , \`role\`
+    FROM \`websitedata\`.\`accounts\`
+    WHERE \`Email\`=?;
+  `;
+
+    connection.query(query, [Email], (error, results, fields) => {
+      const cleanResults = JSON.parse(JSON.stringify(results));
+
+      if (results.length === 0) {
+        callback(null, null);
+        return;
+      }
+      callback(null, cleanResults[0]);
+    });
+  }
+}
+
+
 function GetUsersByNotApproved(callback) {
   if (typeof callback !== "function") {
     console.error("Callback is not a function");
@@ -145,4 +168,5 @@ module.exports = {
   tokenData: tokenController,
   GetUserByUsername: GetUserByUsername,
   GetUsersByNotApproved: GetUsersByNotApproved,
+  GetUserByEmail:GetUserByEmail
 };

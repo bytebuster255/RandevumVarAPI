@@ -1,9 +1,11 @@
 const express = require("express");
-const createPerson = require("./CreatePerson");
+const createPerson = require("./Api/CreatePerson");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const Loginperson = require("./LoginPerson");
-const NotApproved  = require("./NotApproved")
+const Loginperson = require("./Api/LoginPerson");
+const NotApproved = require("./Api/NotApproved");
+const OtpCode = require("./Api/OtpCodeSender");
+const OtpVerify = require("./Api/OtpVerify");
 const app = express();
 
 function customJsonMiddleware(req, res, next) {
@@ -25,9 +27,8 @@ app.use((req, res, next) => {
 app.post("/createPerson", createPerson);
 app.post("/loginPerson", Loginperson);
 app.post("/notapproved", NotApproved);
-
-
-
+app.post("/sendotp", OtpCode);
+app.post("/verifyotp", OtpVerify);
 
 app.listen(3001, () => {
   console.log("Sunucu çalışıyor...");
